@@ -1,0 +1,88 @@
+settings.gradle.kts
+filtered-projects.txt
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### kotlin compiler ###
+# https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
+.kotlin/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### node js ###
+**/node_modules/**
+**/node-v*/**
+**/npm-v*/**
+
+### Mac OS ###
+.DS_Store
+
+### AI Tools ###
+
+## Claude code ##
+# 프로젝트 설정 (https://docs.anthropic.com/ko/docs/claude-code/settings)
+**/.claude/
+# 메모리 (https://docs.anthropic.com/ko/docs/claude-code/memory)
+**/CLAUDE.md
+# OMC
+**/.omc/
+
+## Gemini cli ##
+# 프로젝트 설정 (https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md#the-user-settings-file-and-project-settings-file)
+**/.gemini/
+# 메모리 (https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md#context-files-hierarchical-instructional-context)
+**/GEMINI.md
+
+## OpenAI codex ##
+# 메모리 (https://github.com/openai/codex#memory--project-docs)
+**/AGENTS.md
+
+## Cursor ##
+# 프로젝트 설정 (https://docs.cursor.com/context/rules)
+**/.cursor/
+
+## Windsurf ##
+# 프로젝트 설정 (https://docs.windsurf.com/windsurf/cascade/memories#rules)
+**/.windsurf/
+
+## Claude Code ##
+**/.claude/
+
+## file-based workflow ##
+.agents
+.env
+.planning
+/.playwright-mcp/
