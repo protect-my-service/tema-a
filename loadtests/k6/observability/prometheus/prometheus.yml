@@ -1,0 +1,5 @@
+global:
+  # Prometheus 자체 scrape/evaluation 기본 주기.
+  # k6 지표는 scrape가 아니라 remote write로 들어오지만, 기본값은 짧게 둔다.
+  scrape_interval: 5s
+  evaluation_interval: 5s
