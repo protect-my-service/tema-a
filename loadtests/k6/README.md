@@ -70,6 +70,8 @@ loadtests/k6/
 │   └── http.js
 ├── observability/
 │   └── README.md
+├── reports/
+│   └── template.md
 ├── tests/
 │   ├── smoke/
 │   │   └── order-create.smoke.js
@@ -87,6 +89,7 @@ loadtests/k6/
 | `lib/http.js` | API 호출 헬퍼. 시나리오 파일에서 직접 URL을 조립하지 않고 여기 함수를 import |
 | `lib/data.js` | 랜덤/라운드로빈 데이터 선택 헬퍼 |
 | `observability/` | k6 결과를 Prometheus/Grafana로 보기 위한 로컬 관측 구성 |
+| `reports/` | 테스트별 Grafana 관측 결과와 결론을 정리하는 리포트 템플릿 |
 | `tests/smoke/` | 공격 전 엔드포인트, 헤더, 시드 데이터가 맞는지 확인하는 짧은 테스트 |
 | `tests/attack/` | 공격 시나리오를 k6로 구현한 실제 공격/부하 테스트 |
 | `results/` | k6 raw 결과 JSON 저장 위치 |
