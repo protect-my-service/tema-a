@@ -15,7 +15,7 @@ set -e
 PG_CONTAINER="${PG_CONTAINER:-phase2-postgres-1}"
 PG_USER="${PG_USER:-pms}"
 PG_DB="${PG_DB:-pms_order}"
-SEED_FILE="${SEED_FILE:-tema-a/loadtests/data/data-attack.sql}"
+SEED_FILE="${SEED_FILE:-tema-a/reports/loadtests/data/data-attack.sql}"
 APP_DIR="${APP_DIR:-pms-order}"
 
 echo "[1/3] 컨테이너 재시작..."

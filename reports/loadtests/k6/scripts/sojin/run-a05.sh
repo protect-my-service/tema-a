@@ -1,45 +1,47 @@
 #!/bin/bash
 # ============================================================
-# ATK-A03 · 락 대기 누적 → 커넥션 풀 고갈
+# ATK-A05 · 락 획득 순서 교차 데드락
 # ----------------------------------------------------------
-# A03 은 ramping-arrival-rate (RPS 단계 상승) 이라 stages 가
-# .js 안에 박혀있음. 강도 조절은 RATE 보다 BASE_URL 만 조정.
+# 두 그룹(group_xy / group_yx) 이 반대 순서로 cancel 호출.
+# 시드 PAID 주문 400 건 안에서 30초 권장.
 #
 # 사용:
-#   ./run-a03.sh
+#   ./run-a05.sh
+# 시간 조절:
+#   DURATION=15s ./run-a05.sh   (시드 부족 시)
 # 수비팀 서버 가리키기:
-#   BASE_URL=http://수비팀-주소:8080 ./run-a03.sh
+#   BASE_URL=http://수비팀-주소:8080 ./run-a05.sh
 # ============================================================
 
 set -e
 
-TARGET_PRODUCT="${TARGET_PRODUCT:-1}"
+DURATION="${DURATION:-30s}"
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 
-K6_DIR="${K6_DIR:-tema-a/loadtests/k6}"
-SCRIPT="$K6_DIR/scenrio/a03-pool-exhaustion.js"
+K6_DIR="${K6_DIR:-tema-a/reports/loadtests/k6}"
+SCRIPT="$K6_DIR/scenrio/a05-cancel-deadlock.js"
 RESULTS_DIR="$K6_DIR/results"
 
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-RESULT_FILE="$RESULTS_DIR/a03-$TIMESTAMP.json"
-SUMMARY_FILE="$RESULTS_DIR/a03-$TIMESTAMP-summary.json"
+RESULT_FILE="$RESULTS_DIR/a05-$TIMESTAMP.json"
+SUMMARY_FILE="$RESULTS_DIR/a05-$TIMESTAMP-summary.json"
 
 mkdir -p "$RESULTS_DIR"
 
 echo "============================================================"
-echo "[A03 START] RPS 50 → 100 → 150 → 200 단계 상승  TARGET=$TARGET_PRODUCT"
+echo "[A05 START] DURATION=$DURATION  group_xy(P1→P2) + group_yx(P2→P1)"
 echo "BASE_URL=$BASE_URL"
 echo "============================================================"
 
 k6 run \
-    -e TARGET_PRODUCT="$TARGET_PRODUCT" \
+    -e DURATION="$DURATION" \
     -e BASE_URL="$BASE_URL" \
     --out json="$RESULT_FILE" \
     --summary-export="$SUMMARY_FILE" \
     "$SCRIPT"
 
 echo "============================================================"
-echo "[A03 STOP]"
+echo "[A05 STOP]"
 echo "결과: $RESULT_FILE"
 echo "요약: $SUMMARY_FILE"
 echo "============================================================"

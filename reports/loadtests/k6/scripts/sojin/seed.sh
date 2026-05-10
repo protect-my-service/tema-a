@@ -13,7 +13,7 @@ set -e  # 에러 발생 시 즉시 종료
 PG_CONTAINER="${PG_CONTAINER:-phase2-postgres-1}"
 PG_USER="${PG_USER:-pms}"
 PG_DB="${PG_DB:-pms_order}"
-SEED_FILE="${SEED_FILE:-tema-a/loadtests/data/data-attack.sql}"
+SEED_FILE="${SEED_FILE:-tema-a/reports/loadtests/data/data-attack.sql}"
 
 echo "[시드] $SEED_FILE 실행 중..."
 docker exec -i "$PG_CONTAINER" psql -U "$PG_USER" -d "$PG_DB" < "$SEED_FILE"
