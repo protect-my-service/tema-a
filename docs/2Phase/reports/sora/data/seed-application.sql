@@ -103,7 +103,7 @@ FROM generate_series(122, 200) AS g;
 INSERT INTO orders (id, order_number, member_id, status, total_amount, ordered_at, created_at, updated_at)
 SELECT
     1000 + g,
-    'ORD-20260510-' || LPAD(g::text, 6, '0'),
+    'ORD-20260509-' || LPAD(g::text, 6, '0'),
     g,
     'PENDING',
     (15000 + (g * 91))::DECIMAL(12,2),
@@ -126,7 +126,7 @@ FROM generate_series(1, 80) AS g;
 
 -- 7) C02용 PAID 주문 1건 + order_item 50개 + APPROVED 결제
 INSERT INTO orders (id, order_number, member_id, status, total_amount, ordered_at, created_at, updated_at)
-VALUES (3001, 'ORD-20260510-C02-000001', 1, 'PAID', 2500000.00, NOW(), NOW(), NOW());
+VALUES (3001, 'ORD-20260509-C02-000001', 1, 'PAID', 2500000.00, NOW(), NOW(), NOW());
 
 INSERT INTO order_item (id, order_id, product_id, product_name, product_price, quantity, cancelled_quantity, created_at)
 SELECT

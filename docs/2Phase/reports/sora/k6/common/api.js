@@ -1,10 +1,24 @@
 import http from "k6/http";
-import { BASE_URL, memberHeader } from "./config.js";
+import { BASE_URL, DEFAULT_HEADERS, memberHeader } from "./config.js";
 
 export function addCartItem(memberId, productId, quantity, tags = {}) {
   const payload = JSON.stringify({ productId, quantity });
   return http.post(`${BASE_URL}/api/v1/cart/items`, payload, {
     headers: memberHeader(memberId),
+    tags,
+  });
+}
+
+export function getCart(memberId, tags = {}) {
+  return http.get(`${BASE_URL}/api/v1/cart`, {
+    headers: memberHeader(memberId),
+    tags,
+  });
+}
+
+export function getProduct(productId, tags = {}) {
+  return http.get(`${BASE_URL}/api/v1/products/${productId}`, {
+    headers: DEFAULT_HEADERS,
     tags,
   });
 }
@@ -41,4 +55,3 @@ export function parseJsonSafe(response) {
     return null;
   }
 }
-
