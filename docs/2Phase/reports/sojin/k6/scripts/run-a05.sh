@@ -21,7 +21,7 @@ DURATION="${DURATION:-30s}"
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 WEB_DASHBOARD="${WEB_DASHBOARD:-1}"
 
-K6_DIR="${K6_DIR:-tema-a/reports/k6}"
+K6_DIR="${K6_DIR:-tema-a/docs/2Phase/reports/sojin/k6}"
 SCRIPT="$K6_DIR/scenrio/a05-cancel-deadlock.js"
 RESULTS_DIR="$K6_DIR/results"
 
