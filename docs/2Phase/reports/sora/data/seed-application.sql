@@ -62,9 +62,10 @@ INSERT INTO cart (id, member_id, created_at, updated_at)
 SELECT id, id, NOW(), NOW() FROM member;
 
 -- 5) cart_item 구성
--- member 1: F01/A01 대상 cartItem (id=1, product=1, quantity=1)
+-- member 1: F01/A01 대상 cartItem
+-- A01 기본값(MEMBER_ID=1, CART_ITEM_ID=1)으로 바로 음수 수량 케이스를 재현하기 위해 -1로 시드
 INSERT INTO cart_item (id, cart_id, product_id, quantity, created_at, updated_at)
-VALUES (1, 1, 1, 1, NOW(), NOW());
+VALUES (1, 1, 1, -1, NOW(), NOW());
 
 -- member 2~61: A06용 품절 상품 cartItem (id=2~61)
 INSERT INTO cart_item (id, cart_id, product_id, quantity, created_at, updated_at)
