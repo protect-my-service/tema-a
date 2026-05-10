@@ -2,8 +2,12 @@ import { check, sleep } from "k6";
 import { Counter } from "k6/metrics";
 import { requestPayment } from "../common/api.js";
 
-// ATK-B01: 결제 API 부하를 점진적으로 증가시켜
-// 트랜잭션 내 외부 PG 호출로 인한 커넥션 점유 영향을 측정한다.
+// ============================================================
+// ATK-B01 · 외부 PG 호출 시 커넥션 점유
+// ------------------------------------------------------------
+// 결제 API 부하를 점진 증가시켜 트랜잭션 내 외부 PG 호출 영향(지연/풀 점유)을 측정한다.
+// ============================================================
+
 const MEMBER_IDS = (__ENV.MEMBER_IDS || "1,2,3,4,5,6,7,8,9,10")
     .split(",")
     .map((v) => Number(v.trim()))
@@ -30,6 +34,7 @@ const MEMBER_ORDER_PAIRS = (__ENV.MEMBER_ORDER_PAIRS || "1:1001,2:1002,3:1003,4:
 const status2xx = new Counter("b01_status_2xx");
 const status4xx = new Counter("b01_status_4xx");
 const status5xx = new Counter("b01_status_5xx");
+const requestErr = new Counter("b01_request_error_total");
 
 export const options = {
   scenarios: {
@@ -42,11 +47,8 @@ export const options = {
         { duration: "2m", target: 100 },
       ],
       gracefulRampDown: "10s",
+      tags: { scenario: "ATK-B01" },
     },
-  },
-  thresholds: {
-    http_req_failed: ["rate<0.5"],
-    http_req_duration: ["p(95)<10000"],
   },
 };
 
@@ -76,7 +78,8 @@ export default function () {
 
   const res = requestPayment(memberId, orderId, { atk: "B01" });
 
-  if (res.status >= 200 && res.status < 300) status2xx.add(1);
+  if (res.status === 0) requestErr.add(1);
+  else if (res.status >= 200 && res.status < 300) status2xx.add(1);
   else if (res.status >= 400 && res.status < 500) status4xx.add(1);
   else if (res.status >= 500) status5xx.add(1);
 

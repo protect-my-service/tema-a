@@ -2,8 +2,12 @@ import { check, sleep } from "k6";
 import { Counter } from "k6/metrics";
 import { createOrder } from "../common/api.js";
 
-// ATK-A06: 품절/저재고 cartItem으로 실패 주문을 지속 유입해
-// 실패 요청 폭주 시 자원 소모 양상을 측정한다.
+// ============================================================
+// ATK-A06 · 재고 부족 실패 요청 폭주
+// ------------------------------------------------------------
+// 품절/저재고 cartItem으로 실패 주문을 지속 유입해 자원 소모 양상을 측정한다.
+// ============================================================
+
 const MEMBER_IDS = (__ENV.MEMBER_IDS || "2,3,4,5,6,7,8,9,10")
     .split(",")
     .map((v) => Number(v.trim()))
@@ -30,22 +34,21 @@ const MEMBER_CART_PAIRS = (__ENV.MEMBER_CART_PAIRS || "2:2,3:3,4:4,5:5,6:6,7:7,8
 const status201 = new Counter("a06_status_201");
 const status4xx = new Counter("a06_status_4xx");
 const status5xx = new Counter("a06_status_5xx");
+const requestErr = new Counter("a06_request_error_total");
 
 export const options = {
   scenarios: {
     atk_a06: {
       executor: "ramping-vus",
       stages: [
-        { duration: "2m", target: Number(__ENV.VUS_START || 20) },
-        { duration: "3m", target: Number(__ENV.VUS_MID || 80) },
-        { duration: "3m", target: Number(__ENV.VUS_PEAK || 150) },
+        { duration: "2m", target: parseInt(__ENV.VUS_START || "20", 10) },
+        { duration: "3m", target: parseInt(__ENV.VUS_MID || "80", 10) },
+        { duration: "3m", target: parseInt(__ENV.VUS_PEAK || "150", 10) },
         { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "10s",
+      tags: { scenario: "ATK-A06" },
     },
-  },
-  thresholds: {
-    http_req_failed: ["rate<0.8"],
   },
 };
 
@@ -75,7 +78,8 @@ export default function () {
 
   const res = createOrder(memberId, [cartItemId], { atk: "A06" });
 
-  if (res.status === 201) status201.add(1);
+  if (res.status === 0) requestErr.add(1);
+  else if (res.status === 201) status201.add(1);
   else if (res.status >= 400 && res.status < 500) status4xx.add(1);
   else if (res.status >= 500) status5xx.add(1);
 

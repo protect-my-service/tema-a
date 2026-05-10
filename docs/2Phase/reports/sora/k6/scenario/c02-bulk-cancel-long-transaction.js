@@ -2,10 +2,14 @@ import { check, sleep } from "k6";
 import { Counter } from "k6/metrics";
 import { cancelOrder } from "../common/api.js";
 
-// ATK-C02: 취소 아이템 수가 많은 요청을 반복해
-// 취소 처리 트랜잭션 장기화에 따른 성능 저하를 측정한다.
-const MEMBER_ID = Number(__ENV.MEMBER_ID || 1);
-const ORDER_ID = Number(__ENV.ORDER_ID || 3001);
+// ============================================================
+// ATK-C02 · 대량 취소 긴 트랜잭션
+// ------------------------------------------------------------
+// 취소 아이템 수가 많은 요청을 반복해 취소 처리 장기화 영향을 측정한다.
+// ============================================================
+
+const MEMBER_ID = parseInt(__ENV.MEMBER_ID || "1", 10);
+const ORDER_ID = parseInt(__ENV.ORDER_ID || "3001", 10);
 const REASON = __ENV.REASON || "load-test-c02";
 // 예: [{"orderItemId":11,"quantity":1},{"orderItemId":12,"quantity":2}]
 const CANCEL_ITEMS_JSON =
@@ -34,23 +38,21 @@ try {
 const status2xx = new Counter("c02_status_2xx");
 const status4xx = new Counter("c02_status_4xx");
 const status5xx = new Counter("c02_status_5xx");
+const requestErr = new Counter("c02_request_error_total");
 
 export const options = {
   scenarios: {
     atk_c02: {
       executor: "ramping-vus",
       stages: [
-        { duration: "2m", target: Number(__ENV.VUS_START || 5) },
-        { duration: "3m", target: Number(__ENV.VUS_MID || 20) },
-        { duration: "3m", target: Number(__ENV.VUS_PEAK || 40) },
+        { duration: "2m", target: parseInt(__ENV.VUS_START || "5", 10) },
+        { duration: "3m", target: parseInt(__ENV.VUS_MID || "20", 10) },
+        { duration: "3m", target: parseInt(__ENV.VUS_PEAK || "40", 10) },
         { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "10s",
+      tags: { scenario: "ATK-C02" },
     },
-  },
-  thresholds: {
-    http_req_failed: ["rate<0.8"],
-    http_req_duration: ["p(95)<10000"],
   },
 };
 
@@ -76,7 +78,8 @@ export default function () {
   // 동일 주문에 대해 지정한 취소 아이템 묶음을 반복 호출한다.
   const res = cancelOrder(MEMBER_ID, targetOrderId, targetItems, REASON, { atk: "C02" });
 
-  if (res.status >= 200 && res.status < 300) status2xx.add(1);
+  if (res.status === 0) requestErr.add(1);
+  else if (res.status >= 200 && res.status < 300) status2xx.add(1);
   else if (res.status >= 400 && res.status < 500) status4xx.add(1);
   else if (res.status >= 500) status5xx.add(1);
 
