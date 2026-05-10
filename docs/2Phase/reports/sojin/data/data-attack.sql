@@ -33,16 +33,16 @@ FROM generate_series(1, 1000) AS g;
 -- 3. 카테고리 10개
 -- [공통] Product 의 NOT NULL FK (category_id) 제약 만족용. 직접 공격엔 사용 X.
 INSERT INTO category (id, name, parent_id, depth, sort_order) VALUES
-                                                                  (1,  '전자제품', NULL, 0, 1),
-                                                                  (2,  '의류',    NULL, 0, 2),
-                                                                  (3,  '식품',    NULL, 0, 3),
-                                                                  (4,  '도서',    NULL, 0, 4),
-                                                                  (5,  '홈/리빙', NULL, 0, 5),
-                                                                  (6,  '스마트폰', 1,    1, 1),
-                                                                  (7,  '노트북',  1,    1, 2),
-                                                                  (8,  '상의',    2,    1, 1),
-                                                                  (9,  '하의',    2,    1, 2),
-                                                                  (10, '간편식',  3,    1, 1);
+(1,  '전자제품', NULL, 0, 1),
+(2,  '의류',    NULL, 0, 2),
+(3,  '식품',    NULL, 0, 3),
+(4,  '도서',    NULL, 0, 4),
+(5,  '홈/리빙', NULL, 0, 5),
+(6,  '스마트폰', 1,    1, 1),
+(7,  '노트북',  1,    1, 2),
+(8,  '상의',    2,    1, 1),
+(9,  '하의',    2,    1, 2),
+(10, '간편식',  3,    1, 1);
 SELECT setval('category_id_seq', 10);
 
 -- 4. 핫 상품 2개 (id 1 = P1, id 2 = P2) 본 시드의 *주인공*
@@ -51,8 +51,8 @@ SELECT setval('category_id_seq', 10);
 -- [A03]  A02 와 동일. RPS 단계 상승으로 풀 고갈까지 번지게 함
 -- [A05]  P1, P2 두 상품을 *반대 순서로* cancel → wait-for cycle 데드락
 INSERT INTO product (category_id, name, price, stock_quantity, description, image_url, status) VALUES
-                                                                                                   (6, 'HotProduct-1', 50000.00, 99800, '인기 상품 P1 (A02/A03/A05 시나리오용)', 'https://cdn.example.com/hot-1.jpg', 'ON_SALE'),
-                                                                                                   (6, 'HotProduct-2', 60000.00, 99800, '인기 상품 P2 (A05 페어용)',           'https://cdn.example.com/hot-2.jpg', 'ON_SALE');
+(6, 'HotProduct-1', 50000.00, 99800, '인기 상품 P1 (A02/A03/A05 시나리오용)', 'https://cdn.example.com/hot-1.jpg', 'ON_SALE'),
+(6, 'HotProduct-2', 60000.00, 99800, '인기 상품 P2 (A05 페어용)',           'https://cdn.example.com/hot-2.jpg', 'ON_SALE');
 
 -- 5. 일반 상품 48개 (id 3 ~ 50) — 비교군
 -- [공통] 핫 상품 외 *정상 상품*이 있어야 시스템이 그럴듯해짐. 공격 직접 사용 X.
@@ -65,7 +65,7 @@ SELECT
         WHEN 2 THEN 8
         WHEN 3 THEN 9
         WHEN 4 THEN 10
-        END,
+    END,
     'Product-' || g,
     (10000 + g * 1000)::DECIMAL(10,2),
     1000,
