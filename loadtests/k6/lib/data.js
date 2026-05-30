@@ -27,3 +27,11 @@ export function rotateProduct(seed) {
   const span = PRODUCTS.max - PRODUCTS.min + 1;
   return PRODUCTS.min + (seed % span);
 }
+
+// 전체 상품 범위에서 임의의 콜드 키(롱테일) 상품 ID를 고른다.
+// 캐시 핫스팟 측정에서 핫상품 대신 읽을 "거의 안 읽히는" 상품을 뽑아
+// 캐시 미스를 유발할 때 사용한다.
+// 시드가 대규모(상품 50,000)일수록 캐시에 없을 확률이 높아져 미스가 잘 잡힌다.
+export function pickColdProduct() {
+  return randInt(PRODUCTS.min, PRODUCTS.max);
+}
