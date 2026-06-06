@@ -50,6 +50,31 @@ export function postOrder(memberId, body, params = {}) {
   );
 }
 
+// ===== W3 비동기 lifecycle용 헬퍼 (결제 / 주문 취소) =====
+
+// 결제 요청. POST /api/v1/payments { orderId } -> 200 PaymentResponse(status=APPROVED)
+// ⚠ 외부 결제는 ~5% 확률로 실패한다(ExternalPaymentClient). 실패 시 4xx/5xx가 나고
+//   앱은 해당 주문을 자동 CANCELLED 처리 + OrderCancelledEvent를 발행한다.
+//   → 호출부는 비-200을 "정상 시나리오의 일부"로 분기 처리해야 한다(그 주문은 cancel 생략).
+export function postPayment(memberId, orderId, params = {}) {
+  return http.post(
+    `${BASE_URL}/api/v1/payments`,
+    JSON.stringify({ orderId }),
+    { headers: headers(memberId), ...params },
+  );
+}
+
+// 주문 취소. POST /api/v1/orders/{orderId}/cancel { reason } -> OrderResponse(status=CANCELLED)
+// body 없이 reason만 주면 전체 취소. (부분 취소는 { reason, items:[{orderItemId,cancelQuantity}] })
+// 취소는 PAID 등 취소 가능 상태에서만 허용된다.
+export function postOrderCancel(memberId, orderId, body = {}, params = {}) {
+  return http.post(
+    `${BASE_URL}/api/v1/orders/${orderId}/cancel`,
+    JSON.stringify(body),
+    { headers: headers(memberId), ...params },
+  );
+}
+
 // ===== Week2 캐싱 조회 성능 측정용 GET 헬퍼 =====
 // products/categories는 인증/회원 헤더가 없는 공개 조회 API이므로 헤더를 붙이지 않는다.
 // orders/cart만 X-Member-Id 헤더가 필요하다.

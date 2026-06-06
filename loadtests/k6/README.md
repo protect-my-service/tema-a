@@ -4,6 +4,10 @@ A팀 공격팀의 `pms-order` 외부 공격/부하 시나리오를 k6로 작성�
 
 대상 서버는 `~/Desktop/protectMyService/phase2`이고, 이 문서는 팀원이 정리된 공격 시나리오를 k6 스크립트로 옮길 때 필요한 설치, 구조, 문법, 구현 절차를 설명합니다.
 
+> 주차별 실습 가이드: [Week2 캐싱](../../docs/week2-cache-guide.md) · [Week3 비동기 순서 보장](../../docs/week3-async-guide.md)
+> Week3 하니스: `tests/{smoke/order-lifecycle.smoke,attack/w3-async-order-lifecycle,measure/consumer-lag}.js`,
+> `scripts/{run-w3-steady,run-w3-chaos,inject-rabbitmq-outage,verify-w3}.sh`, `reports/week3-async-ordering.template.md`.
+
 ## 1. 사전 준비
 
 ### 1-1. k6 설치
